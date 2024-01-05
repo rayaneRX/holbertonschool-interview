@@ -2,6 +2,8 @@
 """
 a method that determines if all the boxes can be opened.
 """
+
+
 def canUnlockAll(boxes):
     opened = set()
     opened.add(0)
