@@ -4,7 +4,7 @@ def canUnlockAll(boxes):
     n = len(boxes)
     visited = [False] * n
     stack = [0]
-
+#Lockboxes
     while stack:
         current_box = stack.pop()
         visited[current_box] = True
