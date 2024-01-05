@@ -3,20 +3,16 @@
 a method that determines if all the boxes can be opened.
 """
 def canUnlockAll(boxes):
-    visited = set()
+    n = len(boxes)
+    opened_boxes = [False] * n
+    opened_boxes[0] = True
 
-    def dfs(box_index):
-        visited.add(box_index)
+    stack = [0]
+    while stack:
+        current_box = stack.pop()
+        for key in boxes[current_box]:
+            if not opened_boxes[key]:
+                opened_boxes[key] = True
+                stack.append(key)
 
-        for key in boxes[box_index]:
-            if key < len(boxes) and key not in visited:
-                dfs(key)
-
-    dfs(0)
-
-    return len(visited) == len(boxes)
-
-boxes = [list(range(1000)) for _ in range(1000)]
-
-result = canUnlockAll(boxes)
-print(result)
+    return all(opened_boxes)
