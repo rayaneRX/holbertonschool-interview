@@ -3,16 +3,17 @@
 a method that determines if all the boxes can be opened.
 """
 def canUnlockAll(boxes):
-    n = len(boxes)
-    opened_boxes = [False] * n
-    opened_boxes[0] = True
+    opened = set()
+    opened.add(0)
 
-    stack = [0]
-    while stack:
-        current_box = stack.pop()
-        for key in boxes[current_box]:
-            if not opened_boxes[key]:
-                opened_boxes[key] = True
-                stack.append(key)
+    queue = [0]
 
-    return all(opened_boxes)
+    while queue:
+        box = queue.pop(0)
+
+        for key in boxes[box]:
+            if key not in opened and key < len(boxes):
+                opened.add(key)
+                queue.append(key)
+
+    return len(opened) == len(boxes)
