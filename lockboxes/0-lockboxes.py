@@ -15,3 +15,8 @@ def canUnlockAll(boxes):
     dfs(0)
 
     return len(visited) == len(boxes)
+
+boxes = [list(range(1000)) for _ in range(1000)]
+
+result = canUnlockAll(boxes)
+print(result)
