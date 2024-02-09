@@ -1,80 +1,90 @@
-#include <stdio.h>
-#include <stdlib.h>
+#include "lists.h"
 
-typedef struct listint_t {
-    int data;
-    struct listint_t *next;
-} listint_t;
-
-listint_t* reverseList(listint_t *head) {
+/**
+ * reverse_list - Reverses a linked list
+ * @head: Pointer to pointer of the first node of list
+ *
+ * Return: Pointer to the new head of the reversed list
+ */
+listint_t *reverse_list(listint_t **head)
+{
     listint_t *prev = NULL;
-    listint_t *curr = head;
+    listint_t *current = *head;
     listint_t *next = NULL;
 
-    while (curr != NULL) {
-        next = curr->next;
-        curr->next = prev;
-        prev = curr;
-        curr = next;
+    while (current != NULL)
+    {
+        next = current->next;
+        current->next = prev;
+        prev = current;
+        current = next;
     }
 
-    return prev;
+    *head = prev;
+    return *head;
 }
 
-int is_palindrome(listint_t **head) {
+/**
+ * is_palindrome - Checks if a singly linked list is a palindrome
+ * @head: Pointer to pointer of the first node of list
+ *
+ * Return: 1 if the list is a palindrome, 0 otherwise
+ */
+int is_palindrome(listint_t **head)
+{
+    if (*head == NULL || (*head)->next == NULL)
+        return 1;
+
     listint_t *slow = *head;
     listint_t *fast = *head;
-    listint_t *prev_slow = NULL;
+    listint_t *prev_slow = *head;
+    listint_t *mid = NULL;
     listint_t *second_half = NULL;
-    int is_palindrome = 1;
+    int palindrome = 1;
 
-    if (*head != NULL && (*head)->next != NULL) {
-        while (fast != NULL && fast->next != NULL) {
-            fast = fast->next->next;
-            prev_slow = slow;
-            slow = slow->next;
-        }
-
-        if (fast != NULL) {
-            slow = slow->next;
-        }
-
-        second_half = reverseList(slow);
-
-        listint_t *temp1 = *head;
-        listint_t *temp2 = second_half;
-        while (temp1 != NULL && temp2 != NULL) {
-            if (temp1->data != temp2->data) {
-                is_palindrome = 0;
-                break;
-            }
-            temp1 = temp1->next;
-            temp2 = temp2->next;
-        }
-
-        second_half = reverseList(second_half);
-
-        if (prev_slow != NULL) {
-            prev_slow->next = second_half;
-        } else {
-            *head = second_half;
-        }
+    while (fast != NULL && fast->next != NULL)
+    {
+        fast = fast->next->next;
+        prev_slow = slow;
+        slow = slow->next;
     }
 
-    return is_palindrome;
-}
-
-void push(listint_t **head, int new_data) {
-    listint_t *new_node = (listint_t*)malloc(sizeof(listint_t));
-    new_node->data = new_data;
-    new_node->next = *head;
-    *head = new_node;
-}
-
-void printList(listint_t *node) {
-    while (node != NULL) {
-        printf("%d ", node->data);
-        node = node->next;
+    if (fast != NULL)
+    {
+        mid = slow;
+        slow = slow->next;
     }
-    printf("\n");
+
+    second_half = slow;
+    prev_slow->next = NULL;
+
+    reverse_list(&second_half);
+
+    listint_t *list1 = *head;
+    listint_t *list2 = second_half;
+
+    while (list1 != NULL && list2 != NULL)
+    {
+        if (list1->n != list2->n)
+        {
+            palindrome = 0;
+            break;
+        }
+        list1 = list1->next;
+        list2 = list2->next;
+    }
+
+    reverse_list(&second_half);
+
+    if (mid != NULL)
+    {
+        prev_slow->next = mid;
+        mid->next = second_half;
+    }
+    else
+    {
+        prev_slow->next = second_half;
+    }
+
+    return palindrome;
 }
