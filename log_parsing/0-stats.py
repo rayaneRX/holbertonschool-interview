@@ -14,19 +14,24 @@ line_count = 0
 try:
     for line in sys.stdin:
         line_count += 1
-        # Split the input line into its
+        # Split the input line into its components
         parts = line.split()
         if len(parts) != 7:
+            # Skip the line if the format is not as expected
             continue
         
+        # Extract file size and status code from the line
         file_size = int(parts[-1])
         status_code = int(parts[-2])
 
+        # Update total file size
         total_file_size += file_size
 
+        # Update status code count
         if status_code in status_counts:
             status_counts[status_code] += 1
 
+        # Check if 10 lines have been processed
         if line_count % 10 == 0:
             print("File size:", total_file_size)
             for status_code, count in sorted(status_counts.items()):
