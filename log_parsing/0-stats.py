@@ -6,6 +6,7 @@ script that reads stdin line by line and computes metric
 
 import sys
 
+# Initialize variables to store metrics
 total_file_size = 0
 status_counts = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
 line_count = 0
@@ -13,6 +14,7 @@ line_count = 0
 try:
     for line in sys.stdin:
         line_count += 1
+        # Split the input line into its
         parts = line.split()
         if len(parts) != 7:
             continue
@@ -34,6 +36,7 @@ try:
             sys.stdout.flush()
 
 except KeyboardInterrupt:
+    # If interrupted by the user, print the final statistics
     print("File size:", total_file_size)
     for status_code, count in sorted(status_counts.items()):
         if count > 0:
