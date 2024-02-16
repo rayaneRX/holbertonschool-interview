@@ -5,38 +5,36 @@ script that reads stdin line by line and computes metric
 
 
 import sys
-from collections import defaultdict
-
-def print_statistics(total_file_size, status_code_counts):
-    print(f"File size: {total_file_size}")
-    for code in sorted(status_code_counts.keys()):
-        print(f"{code}: {status_code_counts[code]}")
-
-def process_input(line):
-    parts = line.split()
-    if len(parts) != 7:
-        return None, None
-    ip, _, _, status_code, file_size = parts[0], parts[4], parts[6], parts[8], parts[9]
-    if not (status_code.isdigit() and file_size.isdigit()):
-        return None, None
-    return int(status_code), int(file_size)
 
 total_file_size = 0
-status_code_counts = defaultdict(int)
+status_counts = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
 line_count = 0
 
 try:
     for line in sys.stdin:
-        line = line.strip()
-        status_code, file_size = process_input(line)
-        if status_code is None:
-            continue
-        total_file_size += file_size
-        status_code_counts[status_code] += 1
         line_count += 1
-        if line_count == 10:
-            print_statistics(total_file_size, status_code_counts)
-            line_count = 0
+        parts = line.split()
+        if len(parts) != 7:
+            continue
+        
+        file_size = int(parts[-1])
+        status_code = int(parts[-2])
+
+        total_file_size += file_size
+
+        if status_code in status_counts:
+            status_counts[status_code] += 1
+
+        if line_count % 10 == 0:
+            print("File size:", total_file_size)
+            for status_code, count in sorted(status_counts.items()):
+                if count > 0:
+                    print(f"{status_code}: {count}")
+            print()
+            sys.stdout.flush()
+
 except KeyboardInterrupt:
-    print_statistics(total_file_size, status_code_counts)
-    sys.exit(0)
+    print("File size:", total_file_size)
+    for status_code, count in sorted(status_counts.items()):
+        if count > 0:
+            print(f"{status_code}: {count}")
