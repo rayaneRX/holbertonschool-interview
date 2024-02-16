@@ -10,6 +10,9 @@ status_counts = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
 line_count = 0
 
 try:
+    """
+    Script that reads stdin line by line and computes metrics
+    """
     # Iterate over each line in the standard input
     for line in sys.stdin:
         line_count += 1
@@ -45,6 +48,9 @@ try:
             sys.stdout.flush()
 
 except KeyboardInterrupt:
+    """
+    Script that reads stdin line by line and computes metrics
+    """
     # If interrupted by the user, print the final statistics
     print("File size:", total_file_size)
     for status_code, count in sorted(status_counts.items()):
