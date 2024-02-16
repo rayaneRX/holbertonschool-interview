@@ -4,55 +4,51 @@ Script that reads stdin line by line and computes metrics
 """
 import sys
 
-# Initialize variables to store metrics
-total_file_size = 0
-status_counts = {200: 0, 301: 0, 400: 0, 401: 0, 403: 0, 404: 0, 405: 0, 500: 0}
-line_count = 0
+# Dictionary to store counts of different HTTP status codes
+status_code_counts = {
+    '200': 0,
+    '301': 0,
+    '400': 0,
+    '401': 0,
+    '403': 0,
+    '404': 0,
+    '405': 0,
+    '500': 0
+}
+total_file_size = 0  # Variable to store total size of files processed
+lines_processed = 0  # Counter for number of lines processed
 
 try:
-    """
-    Script that reads stdin line by line and computes metrics
-    """
-    # Iterate over each line in the standard input
+    # Loop through each line from standard input (stdin)
     for line in sys.stdin:
-        line_count += 1
+        # Split the line by space to extract necessary information
+        data = line.split(' ')
 
-        # Split the input line into its components
-        parts = line.split()
-        
-        # Check if the line has the expected number of components
-        if len(parts) != 7:
-            # Skip the line if the format is not as expected
-            continue
-        
-        # Extract file size and status code from the line
-        file_size = int(parts[-1])
-        status_code = int(parts[-2])
+        # Check if line contains enough elements to extract status and size
+        if len(data) > 6:
+            status_code, size = data[-2:]  # Extract status code and size
+            total_file_size += int(size)   # Add size to total_file_size
+            # Check if status code is in status_code_counts
+            if status_code in status_code_counts:
+                # Increment count for this status code
+                status_code_counts[status_code] += 1
+            lines_processed += 1  # Increment lines_processed counter
 
-        # Update total file size
-        total_file_size += file_size
-
-        # Update status code count
-        if status_code in status_counts:
-            status_counts[status_code] += 1
-
-        # Check if 10 lines have been processed
-        if line_count % 10 == 0:
-            # Print the statistics
-            print("File size:", total_file_size)
-            for status_code, count in sorted(status_counts.items()):
+        # Print metrics every 10 lines processed
+        if lines_processed % 10 == 0:
+            print('File size: {}'.format(total_file_size))
+            # Print status code counts in sorted order
+            for (code, count) in sorted(status_code_counts.items()):
                 if count > 0:
-                    print(f"{status_code}: {count}")
-            print()
-            # Flush the output to ensure it's immediately visible
-            sys.stdout.flush()
+                    print('{}: {}'.format(code, count))
+            lines_processed = 0  # Reset lines_processed counter
 
 except KeyboardInterrupt:
-    """
-    Script that reads stdin line by line and computes metrics
-    """
-    # If interrupted by the user, print the final statistics
-    print("File size:", total_file_size)
-    for status_code, count in sorted(status_counts.items()):
+    pass  # Handle KeyboardInterrupt (Ctrl+C) gracefully
+
+finally:
+    # Print final metrics after
+    print('File size: {}'.format(total_file_size))
+    for (code, count) in sorted(status_code_counts.items()):
         if count > 0:
-            print(f"{status_code}: {count}")
+            print('{}: {}'.format(code, count))
