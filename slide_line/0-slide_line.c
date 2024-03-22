@@ -8,7 +8,7 @@
 static void slide_left(int *line, size_t size)
 {
     size_t i;
-    int merged[size];
+    int merged[LINE_SIZE]; // Define a fixed-size array
     size_t merged_index = 0;
 
     for (i = 0; i < size; i++)
@@ -50,7 +50,7 @@ static void slide_left(int *line, size_t size)
 static void slide_right(int *line, size_t size)
 {
     size_t i;
-    int merged[size];
+    int merged[LINE_SIZE]; // Define a fixed-size array
     size_t merged_index = size;
 
     for (i = size; i > 0; i--)
