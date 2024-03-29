@@ -1,6 +1,13 @@
 #include "menger.h"
 
 
+/**
+ * isEmpty - check if a cell is empty
+ * @row: the row position of the cell
+ * @col: the column position of the cell
+ *
+ * Return: 1 if the cell is empty, 0 otherwise
+*/
 int isEmpty(int row, int col)
 {
 	while (row > 0 && col > 0)
@@ -13,6 +20,12 @@ int isEmpty(int row, int col)
 	return (0);
 }
 
+/**
+ * menger - draws a 2D Menger Sponge
+ * @level: the level of the Menger Sponge to draw
+ *
+ * Return: void
+*/
 void menger(int level)
 {
 	int size, row, col;
