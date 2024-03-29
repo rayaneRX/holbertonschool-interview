@@ -8,6 +8,8 @@
  *
  * Return: 1 if the cell is empty, 0 otherwise
 */
+
+
 int isEmpty(int row, int col)
 {
 	while (row > 0 && col > 0)
