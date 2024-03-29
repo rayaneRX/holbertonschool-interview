@@ -1,27 +1,35 @@
-#include <stdio.h>
-#include <math.h>
+#include "menger.h"
 
-void drawSponge(int size, int x, int y) {
-    int i, j;
-    for (i = x; i < x + size; i++) {
-        for (j = y; j < y + size; j++) {
-            printf("#");
-        }
-        printf("\n");
-    }
+
+int isEmpty(int row, int col)
+{
+	while (row > 0 && col > 0)
+	{
+		if (row % 3 == 1 && col % 3 == 1)
+			return (1);
+		row /= 3;
+		col /= 3;
+	}
+	return (0);
 }
 
-void menger(int level) {
-    if (level < 0)
-        return;
-    
-    int size = pow(3, level);
-    int i, j;
-    for (i = 0; i < size; i += size / 3) {
-        for (j = 0; j < size; j += size / 3) {
-            if (i == size / 3 && j == size / 3)
-                continue;
-            drawSponge(size / 3, i, j);
-        }
-    }
+void menger(int level)
+{
+	int size, row, col;
+
+	if (level < 0)
+		return;
+
+	size = pow(3, level);
+	for (row = 0; row < size; row++)
+	{
+		for (col = 0; col < size; col++)
+		{
+			if (isEmpty(row, col))
+				printf(" ");
+			else
+				printf("#");
+		}
+		printf("\n");
+	}
 }
