@@ -19,9 +19,18 @@ def is_safe(board, row, col, N):
     
     return True
 
+def print_solution(board):
+    N = len(board)
+    solution = []
+    for i in range(N):
+        for j in range(N):
+            if board[i][j] == 1:
+                solution.append([i, j])
+    return solution
+
 def solve_nqueens_util(board, col, N, result):
     if col >= N:
-        result.append([[row, col] for row in range(N) if board[row][col]])
+        result.append(print_solution(board))
         return True
     
     res = False
@@ -43,19 +52,13 @@ def solve_nqueens(N):
     
     board = [[0] * N for _ in range(N)]
     result = []
-    if not solve_nqueens_util(board, 0, N, result):
-        print("No solution exists")
-        return
+    solve_nqueens_util(board, 0, N, result)
     
     for sol in result:
         print(sol)
 
 if __name__ == "__main__":
-    if len(sys.argv) != 2:
-        print("Usage: nqueens N")
-        sys.exit(1)
-    
-    if sys.argv[1] == '':
+    if len(sys.argv) != 2 or not sys.argv[1]:
         print("Usage: nqueens N")
         sys.exit(1)
     
