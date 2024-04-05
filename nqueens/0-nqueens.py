@@ -41,7 +41,7 @@ def solve_nqueens_util(board, col, N, result):
         if is_safe(board, i, col, N):
             board[i][col] = 1
             res = solve_nqueens_util(board, col + 1, N, result) or res
-            board[i][col] = 0  # Backtrack if placing queen at board[i][col] doesn't lead to a solution
+            board[i][col] = 0
 
     return res
 
