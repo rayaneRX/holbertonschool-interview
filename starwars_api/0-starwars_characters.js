@@ -30,6 +30,7 @@ function fetchData(url) {
         });
     });
 }
+
 request(url, { json: true }, async (error, response, body) => {
     if (error || response.statusCode !== 200) {
         console.error(`Error fetching movie data: ${error || response.statusCode}`);
