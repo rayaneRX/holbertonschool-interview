@@ -5,7 +5,7 @@ const movieId = process.argv[2];
 
 const filmUrl = `https://swapi.dev/api/films/${movieId}/`;
 
-function getCharacterName(url) {
+function getCharacterName (url) {
   return new Promise((resolve, reject) => {
     request(url, { json: true, rejectUnauthorized: false }, (error, response, body) => {
       if (error) {
