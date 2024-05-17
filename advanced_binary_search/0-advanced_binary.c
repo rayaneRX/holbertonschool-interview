@@ -1,70 +1,82 @@
-#include <stdio.h>
 #include "search_algos.h"
 
-/**
- * print_array - Prints the elements of an array
- * @array: The array to print
- * @low: The starting index of the subarray to print
- * @high: The ending index of the subarray to print
- */
-void print_array(int *array, size_t low, size_t high)
-{
-    size_t i;
 
-    printf("Searching in array: ");
-    for (i = low; i <= high; i++)
-    {
-        if (i > low)
-            printf(", ");
-        printf("%d", array[i]);
-    }
-    printf("\n");
+/**
+ * print_array - Print an array
+ * @array: Array to print
+ * @left: Left index
+ * @right: Right index
+ *
+ * Return: 1 if the array is printed, 0 otherwise
+ */
+int print_array(int *array, int left, int right)
+{
+	int i = 0;
+
+	if (left > right)
+		return (0);
+
+	printf("Searching in array: ");
+
+	for (i = left; i <= right; i++)
+	{
+		printf("%d", array[i]);
+		if (i < right)
+			printf(", ");
+	}
+	printf("\n");
+	return (1);
 }
 
+
 /**
- * recursive_binary - Recursively performs an advanced binary search
- * @array: Pointer to the first element of the array
- * @low: The starting index of the subarray to search
- * @high: The ending index of the subarray to search
- * @value: The value to search for
+ * advanced_binary_rec - Search for a value in a sorted array of integers
+ * @array: Array to search
+ * @left: Left index
+ * @right: Right index
+ * @value: Value to search for
  *
- * Return: The index where value is located, or -1 if not found
+ * Return: Index where the value is located, -1 otherwise
  */
-int recursive_binary(int *array, size_t low, size_t high, int value)
+int advanced_binary_rec(int *array, int left, int right, int value)
 {
-    size_t mid;
+	int middle;
 
-    if (high < low)
-        return (-1);
+	if (left > right)
+		return (-1);
 
-    print_array(array, low, high);
+	print_array(array, left, right);
 
-    mid = low + (high - low) / 2;
-
-    if (array[mid] == value)
-    {
-        if (mid == low || array[mid - 1] != value)
-            return (mid);
-        return (recursive_binary(array, low, mid, value));
-    }
-    else if (array[mid] > value)
-        return (recursive_binary(array, low, mid - 1, value));
-    else
-        return (recursive_binary(array, mid + 1, high, value));
+	middle = left + (right - left) / 2;
+	if (array[middle] == value)
+	{
+		if (middle == left || array[middle] != value)
+			return (middle);
+		else
+			return (advanced_binary_rec(array, left, middle, value));
+	}
+	else if (array[middle] > value)
+	{
+		return (advanced_binary_rec(array, left, middle, value));
+	}
+	else
+	{
+		return (advanced_binary_rec(array, middle + 1, right, value));
+	}
 }
 
+
 /**
- * advanced_binary - Searches for a value in a sorted array of integers
- * @array: Pointer to the first element of the array to search in
- * @size: Number of elements in the array
- * @value: The value to search for
+ * advanced_binary - Search for a value in a sorted array of integers
+ * @array: Array to search
+ * @size: Size of the array
+ * @value: Value to search for
  *
- * Return: The index where value is located, or -1 if not found
+ * Return: Index where the value is located, -1 otherwise
  */
 int advanced_binary(int *array, size_t size, int value)
 {
-    if (array == NULL)
-        return (-1);
-
-    return (recursive_binary(array, 0, size - 1, value));
+	if (array == NULL || size == 0)
+		return (-1);
+	return (advanced_binary_rec(array, 0, size - 1, value));
 }
