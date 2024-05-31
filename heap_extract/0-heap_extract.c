@@ -1,188 +1,109 @@
 #include "binary_trees.h"
-#include <stdlib.h>
 
 /**
- * heap_extract - Extracts the root node of a Max Binary Heap
- * @root: Double pointer to the root node of the heap
- *
- * Return: Value stored in the root node, or 0 if function fails
+ * swap_nodes - Swaps two nodes in a binary heap
+ * @node1: First node
+ * @node2: Second node
  */
-int heap_extract(heap_t **root)
+void swap_nodes(heap_t *node1, heap_t *node2)
 {
-    int value;
-    heap_t *last_node;
+	int temp;
 
-    if (!root || !*root)
-        return (0);
-
-    value = (*root)->n;
-    if (!(*root)->left && !(*root)->right)
-    {
-        free(*root);
-        *root = NULL;
-        return (value);
-    }
-
-    /* Find the last node in level-order */
-    last_node = find_last_node(*root);
-    if (last_node->parent)
-    {
-        if (last_node->parent->left == last_node)
-            last_node->parent->left = NULL;
-        else
-            last_node->parent->right = NULL;
-    }
-
-    /* Replace root with last node */
-    last_node->left = (*root)->left;
-    last_node->right = (*root)->right;
-    last_node->parent = NULL;
-    if (last_node->left)
-        last_node->left->parent = last_node;
-    if (last_node->right)
-        last_node->right->parent = last_node;
-
-    free(*root);
-    *root = last_node;
-
-    /* Rebuild the heap */
-    heapify_down(*root);
-
-    return (value);
+	temp = node1->n;
+	node1->n = node2->n;
+	node2->n = temp;
 }
 
 /**
- * find_last_node - Finds the last node in a binary tree in level-order
- * @root: Pointer to the root node of the tree
+ * heapify_down - Ensures the heap property is maintained after extraction
+ * @root: Pointer to the root node of the heap
+ */
+void heapify_down(heap_t *root)
+{
+	heap_t *largest = root;
+	heap_t *left = root->left;
+	heap_t *right = root->right;
+
+	if (left && left->n > largest->n)
+		largest = left;
+	if (right && right->n > largest->n)
+		largest = right;
+	if (largest != root)
+	{
+		swap_nodes(root, largest);
+		heapify_down(largest);
+	}
+}
+
+/**
+ * get_last_node - Finds the last node in level-order traversal
+ * @root: Pointer to the root node
  *
  * Return: Pointer to the last node
  */
-heap_t *find_last_node(heap_t *root)
+heap_t *get_last_node(heap_t *root)
 {
-    heap_t *last = NULL;
-    queue_t *queue = create_queue();
-    enqueue(queue, root);
+	heap_t *queue[1024];
+	int front = 0, rear = 0;
+	heap_t *last = NULL;
 
-    while (!is_empty(queue))
-    {
-        last = dequeue(queue);
-        if (last->left)
-            enqueue(queue, last->left);
-        if (last->right)
-            enqueue(queue, last->right);
-    }
+	if (!root)
+		return (NULL);
 
-    free_queue(queue);
-    return (last);
+	queue[rear++] = root;
+	while (front < rear)
+	{
+		last = queue[front++];
+		if (last->left)
+			queue[rear++] = last->left;
+		if (last->right)
+			queue[rear++] = last->right;
+	}
+
+	return (last);
 }
 
 /**
- * heapify_down - Maintains the Max Heap property by performing heapify down
- * @node: Pointer to the node to heapify down
- */
-void heapify_down(heap_t *node)
-{
-    int temp;
-    heap_t *largest = node;
-
-    while (1)
-    {
-        if (node->left && node->left->n > largest->n)
-            largest = node->left;
-        if (node->right && node->right->n > largest->n)
-            largest = node->right;
-        if (largest == node)
-            break;
-
-        temp = node->n;
-        node->n = largest->n;
-        largest->n = temp;
-
-        node = largest;
-    }
-}
-
-/**
- * create_queue - Creates a queue
+ * heap_extract - Extracts the root node of a max binary heap
+ * @root: Double pointer to the root node of the heap
  *
- * Return: Pointer to the created queue
+ * Return: The value stored in the root node, or 0 on failure
  */
-queue_t *create_queue(void)
+int heap_extract(heap_t **root)
 {
-    queue_t *queue = malloc(sizeof(queue_t));
-    if (!queue)
-        return (NULL);
-    queue->front = NULL;
-    queue->rear = NULL;
-    return (queue);
-}
+	int value;
+	heap_t *last_node, *root_node;
 
-/**
- * is_empty - Checks if the queue is empty
- * @queue: Pointer to the queue
- *
- * Return: 1 if the queue is empty, 0 otherwise
- */
-int is_empty(queue_t *queue)
-{
-    return (queue->front == NULL);
-}
+	if (!root || !*root)
+		return (0);
 
-/**
- * enqueue - Adds an element to the queue
- * @queue: Pointer to the queue
- * @node: Pointer to the node to add to the queue
- */
-void enqueue(queue_t *queue, heap_t *node)
-{
-    queue_node_t *new_node = malloc(sizeof(queue_node_t));
-    if (!new_node)
-        return;
-    new_node->node = node;
-    new_node->next = NULL;
-    if (is_empty(queue))
-    {
-        queue->front = new_node;
-        queue->rear = new_node;
-    }
-    else
-    {
-        queue->rear->next = new_node;
-        queue->rear = new_node;
-    }
-}
+	root_node = *root;
+	value = root_node->n;
 
-/**
- * dequeue - Removes an element from the queue
- * @queue: Pointer to the queue
- *
- * Return: Pointer to the removed node
- */
-heap_t *dequeue(queue_t *queue)
-{
-    queue_node_t *temp;
-    heap_t *node;
+	if (!root_node->left && !root_node->right)
+	{
+		free(root_node);
+		*root = NULL;
+		return (value);
+	}
 
-    if (is_empty(queue))
-        return (NULL);
+	last_node = get_last_node(root_node);
 
-    temp = queue->front;
-    node = temp->node;
-    queue->front = queue->front->next;
-    if (!queue->front)
-        queue->rear = NULL;
+	if (last_node == root_node)
+	{
+		free(root_node);
+		*root = NULL;
+		return (value);
+	}
 
-    free(temp);
-    return (node);
-}
+	root_node->n = last_node->n;
+	if (last_node->parent->left == last_node)
+		last_node->parent->left = NULL;
+	else
+		last_node->parent->right = NULL;
 
-/**
- * free_queue - Frees the memory allocated for the queue
- * @queue: Pointer to the queue
- */
-void free_queue(queue_t *queue)
-{
-    while (!is_empty(queue))
-        dequeue(queue);
-    free(queue);
+	free(last_node);
+	heapify_down(root_node);
+
+	return (value);
 }
