@@ -61,7 +61,7 @@ char *multiply(char *num1, char *num2)
             result[i + j + 1] += carry;
     }
 
-    // Find the first non-zero character
+    /* Find the first non-zero character */
     for (i = 0; i < len_result; i++)
     {
         if (result[i] != '0')
