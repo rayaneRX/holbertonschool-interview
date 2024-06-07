@@ -1,114 +1,123 @@
 #include <stdio.h>
 #include <stdlib.h>
-#include <ctype.h>
 #include <string.h>
+#include <ctype.h>
+
 
 /**
- * is_digit - checks if a string is composed only of digits
- * @str: string to check
+ * print_error_and_exit - Print "Error" and exit with status 98
  *
- * Return: 1 if true, 0 if false
- */
-int is_digit(char *str)
+ * Return: void
+*/
+void print_error_and_exit(void)
 {
-    int i = 0;
-
-    while (str[i])
-    {
-        if (!isdigit(str[i]))
-            return (0);
-        i++;
-    }
-    return (1);
+	printf("Error\n");
+	exit(98);
 }
 
+
 /**
- * multiply - multiplies two large numbers represented as strings
- * @num1: first number
- * @num2: second number
+ * is_digit - Check if a character is a digit
+ * @c: The character to check
  *
- * Return: pointer to the result
- */
-char *multiply(char *num1, char *num2)
+ * Return: 1 if c is a digit, 0 otherwise
+*/
+int is_digit(char c)
 {
-    int len1 = strlen(num1);
-    int len2 = strlen(num2);
-    int len_result = len1 + len2;
-    int i, j, carry, n1, n2, sum;
-    char *result = malloc(len_result + 1);
-
-    if (!result)
-        return (NULL);
-
-    for (i = 0; i < len_result; i++)
-        result[i] = '0';
-
-    result[len_result] = '\0';
-
-    for (i = len1 - 1; i >= 0; i--)
-    {
-        carry = 0;
-        n1 = num1[i] - '0';
-
-        for (j = len2 - 1; j >= 0; j--)
-        {
-            n2 = num2[j] - '0';
-            sum = (n1 * n2) + (result[i + j + 1] - '0') + carry;
-            carry = sum / 10;
-            result[i + j + 1] = (sum % 10) + '0';
-        }
-        if (carry > 0)
-            result[i + j + 1] += carry;
-    }
-
-    /* Find the first non-zero character */
-    for (i = 0; i < len_result; i++)
-    {
-        if (result[i] != '0')
-            break;
-    }
-
-    if (i == len_result)
-        return ("0");
-
-    return (result + i);
+	return (c >= '0' && c <= '9');
 }
 
+
 /**
- * main - entry point of the program
- * @argc: number of arguments
- * @argv: array of arguments
+ * validate_arguments - Validate the arguments
+ * @argc: The number of arguments
+ * @argv: The arguments
  *
- * Return: 0 if successful, 98 if failure
- */
+ * Return: void
+*/
+void validate_arguments(int argc, char *argv[])
+{
+	int i, j;
+
+	if (argc != 3)
+	{
+		print_error_and_exit();
+	}
+	for (i = 1; i < 3; i++)
+	{
+		for (j = 0; argv[i][j] != '\0'; j++)
+		{
+			if (!is_digit(argv[i][j]))
+			{
+				print_error_and_exit();
+			}
+		}
+	}
+}
+
+
+/**
+ * multiply - Multiply two numbers
+ * @num1: The first number
+ * @num2: The second number
+ *
+ * Return: void
+*/
+void multiply(char *num1, char *num2)
+{
+	int len1, len2, i, j, mul, sum;
+	int *result;
+
+	len1 = strlen(num1);
+	len2 = strlen(num2);
+	result = (int *)calloc(len1 + len2, sizeof(int));
+	if (result == NULL)
+	{
+		print_error_and_exit();
+	}
+
+	for (i = len1 - 1; i >= 0; i--)
+	{
+		for (j = len2 - 1; j >= 0; j--)
+		{
+			mul = (num1[i] - '0') * (num2[j] - '0');
+			sum = mul + result[i + j + 1];
+			result[i + j + 1] = sum % 10;
+			result[i + j] += sum / 10;
+		}
+	}
+
+	i = 0;
+	while (i < len1 + len2 && result[i] == 0)
+	{
+		i++;
+	}
+	if (i == len1 + len2)
+	{
+		printf("0\n");
+	}
+	else
+	{
+		for (; i < len1 + len2; i++)
+		{
+			printf("%d", result[i]);
+		}
+		printf("\n");
+	}
+	free(result);
+}
+
+
+/**
+ * main - Entry point
+ * @argc: The number of arguments
+ * @argv: The arguments
+ *
+ * Return: 0 on success, 98 on failure
+*/
 int main(int argc, char *argv[])
 {
-    char *num1, *num2, *result;
-
-    if (argc != 3)
-    {
-        printf("Error\n");
-        exit(98);
-    }
-
-    num1 = argv[1];
-    num2 = argv[2];
-
-    if (!is_digit(num1) || !is_digit(num2))
-    {
-        printf("Error\n");
-        exit(98);
-    }
-
-    result = multiply(num1, num2);
-
-    if (!result)
-    {
-        printf("Error\n");
-        exit(98);
-    }
-
-    printf("%s\n", result);
-    free(result - (result - num1 < 0 ? 0 : strlen(num1)));
-    return (0);
+	validate_arguments(argc, argv);
+	multiply(argv[1], argv[2]);
+	return (0);
 }
